@@ -1,0 +1,6 @@
+{
+	"name": "optional",
+	"description": "Optional (aka Maybe or Option) types",
+	"authors": ["sinkuu"],
+	"targetType": "library"
+}
