@@ -223,7 +223,7 @@ unittest
 	assert(optional!int().empty);
 }
 
-auto optionalSwitch(alias existFun, alias emptyFun = {}, T)(Optional!T opt)
+auto optSwitch(alias existFun, alias emptyFun = {}, T)(Optional!T opt)
 {
 	import std.functional : unaryFun;
 
@@ -243,7 +243,7 @@ unittest
 {
 	Optional!int opt;
 
-	opt.optionalSwitch!(
+	opt.optSwitch!(
 		(int x)
 		{
 			assert(false);
@@ -254,7 +254,7 @@ unittest
 
 	assert(opt.get() == 100);
 
-	opt.optionalSwitch!(
+	opt.optSwitch!(
 		(int x)
 		{
 			assert(x == 100);
@@ -263,6 +263,6 @@ unittest
 			assert(false);
 		});
 
-	opt.optionalSwitch!((x) { assert(x == 100); });
+	opt.optSwitch!((x) { assert(x == 100); });
 }
 
