@@ -8,20 +8,7 @@ struct Optional(T)
 {
 	private
 	{
-		static if (!is(typeof({T t;})) && !is(typeof(T.init == T)))
-		{
-			ubyte[T.sizeof] _storage;
-
-			@property ref Unqual!T _payload() inout @trusted
-			{
-				return *cast(Unqual!T*) _storage.ptr;
-			}
-		}
-		else
-		{
-			T _payload;
-		}
-
+		Unqual!T _payload = void;
 		bool _empty = true;
 
 	}
