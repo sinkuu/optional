@@ -30,7 +30,8 @@ struct Optional(T)
 		else
 			_empty = false;
 
-		_payload = val;
+		import std.conv : emplace;
+		emplace(&_payload, val);
 	}
 
 	inout(T) get() inout
