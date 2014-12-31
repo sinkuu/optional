@@ -8,18 +8,32 @@ struct Optional(T)
 {
 	private
 	{
-		void[T.sizeof] _storage;
+		static if (!is(typeof({T t;})) && !is(typeof(T.init == T)))
+		{
+			ubyte[T.sizeof] _storage;
+
+			@property ref Unqual!T _payload() inout @trusted
+			{
+				return *cast(Unqual!T*) _storage.ptr;
+			}
+		}
+		else
+		{
+			T _payload;
+		}
+
 		bool _empty = true;
 
-		@property ref Unqual!T _payload() const @trusted
-		{
-			return *cast(Unqual!T*) _storage.ptr;
-		}
 	}
 
-	this(T val)
+	this(inout(T) val) inout
 	{
-		opAssign(val);
+		static if (is(T : Object))
+			_empty = val is null;
+		else
+			_empty = false;
+
+		_payload = val;
 	}
 
 	void opAssign(T val)
@@ -32,20 +46,20 @@ struct Optional(T)
 		_payload = val;
 	}
 
-	T get() const
+	inout(T) get() inout
 	{
 		assert(!_empty, "empty Optional");
 		return _payload;
 	}
 
-	T getOrElse(lazy T defaultValue) const
+	inout(T) getOrElse(lazy inout(T) defaultValue) inout
 	{
 		return _empty ? defaultValue : _payload;
 	}
 
-	static if(is(T : Object))
+	static if(is(typeof({T t = null;})))
 	{
-		T orNull() const
+		inout(T) orNull() inout
 		{
 			return _empty ? null : _payload;
 		}
@@ -136,19 +150,56 @@ unittest
 	assert(s.get() == S(100));
 
 	immutable ims = s.get();
+	assert(ims == S(100));
 
 	s.nullify();
 	assert(s.empty);
 
 	Optional!(immutable S) s2 = S(100);
+	assert(s2.get == S(100));
 }
 
-pure @safe nothrow @nogc
+@safe pure nothrow
 unittest
 {
 	immutable Optional!string str = "foo";
 	assert(str.get() == "foo");
 	static assert(!__traits(compiles, str = "bar"));
+
+	immutable Optional!(int[]) arr = [1, 2, 3].idup;
+	static assert(is(typeof(arr.get()) == immutable int[]));
+	assert(arr.get.length == 3);
+}
+
+@safe pure nothrow
+unittest
+{
+	class Obj
+	{
+	@safe pure nothrow @nogc:
+
+		private int _x;
+
+		@property
+		{
+			void x(int n) { _x = n; }
+			int x() const { return _x; }
+		}
+
+		this (int x) { _x = x; }
+	}
+
+	Optional!Obj objm = new Obj(0);
+	objm.get.x = 10;
+	assert(objm.get.x == 10);
+
+	auto obj = new Obj(10);
+	Optional!Obj objc = obj;
+	static assert(!__traits(compiles, obji.get.x = 100));
+	assert(objc.get.x == 10);
+
+	immutable obji = new immutable Obj(0);
+	static assert(!__traits(compiles, obji.get.x = 100));
 }
 
 
