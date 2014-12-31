@@ -88,14 +88,14 @@ struct Optional(T)
 }
 
 ///
-pure @safe nothrow @nogc
+@safe pure nothrow @nogc
 unittest
 {
 	Optional!string val = "foo";
 	assert(!val.empty);
 	assert(val.get() == "foo");
 
-	import std.range;
+	import std.range : isInputRange, hasLength;
 	static assert(isInputRange!(Optional!int));
 	static assert(hasLength!(Optional!int));
 
@@ -103,6 +103,7 @@ unittest
 	assert(val.front == "foo");
 	foreach (i; val) { assert(i == "foo"); }
 
+	import std.range : only;
 	import std.algorithm : equal;
 	assert(equal(val, only("foo")));
 
@@ -111,7 +112,7 @@ unittest
 	foreach (i; val) assert(false);
 }
 
-pure @safe nothrow
+@safe pure nothrow
 unittest
 {
 	Optional!Object obj;
@@ -123,7 +124,7 @@ unittest
 	assert(!obj.empty);
 }
 
-pure @safe nothrow @nogc
+@safe pure nothrow @nogc
 unittest
 {
 	static struct S
