@@ -4,7 +4,7 @@ module optional;
 import std.traits : Unqual;
 
 
-///
+/// Represents 'optional' value.
 struct Optional(T)
 {
 	private
@@ -85,10 +85,31 @@ struct Optional(T)
 		return _empty ? 0 : 1;
 	}
 
-	///
+	/**
+	Casts to boolean.
+
+	Returns:
+		true if Optional is not empty.
+	*/
 	bool opCast(T : bool)() const
 	{
 		return !_empty;
+	}
+
+	///
+	unittest
+	{
+		// can be used to determine whether it's empty in if-statement.
+
+		Optional!int opt;
+		if (opt)
+		{
+			assert(!opt.empty);
+		}
+		else
+		{
+			assert(opt.empty);
+		}
 	}
 }
 
