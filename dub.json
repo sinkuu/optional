@@ -1,6 +1,7 @@
 {
 	"name": "optional",
-	"description": "Optional (aka Maybe or Option) types",
+	"description": "A library for representationg 'optional' values (as known as Maybe and Option)",
 	"authors": ["sinkuu"],
-	"targetType": "library"
+	"targetType": "library",
+	"license": "MIT"
 }
