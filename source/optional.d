@@ -295,7 +295,14 @@ auto optSwitch(alias existFun, alias emptyFun = {}, T)(Optional!T opt)
 
 	if (opt.empty)
 	{
-		return emptyFun();
+		static if (is(typeof(emptyFun) == string))
+		{
+			return mixin(emptyFun);
+		}
+		else
+		{
+			return emptyFun();
+		}
 	}
 	else
 	{
@@ -330,5 +337,8 @@ unittest
 		});
 
 	opt.optSwitch!((x) { assert(x == 100); });
+
+	// optSwitch can return the result.
+	assert(optional!int().optSwitch!(x => x + 10, () => 0) == 0);
 }
 
