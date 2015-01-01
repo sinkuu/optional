@@ -4,6 +4,7 @@ module optional;
 import std.traits : Unqual;
 
 
+///
 struct Optional(T)
 {
 	private
@@ -23,6 +24,7 @@ struct Optional(T)
 		_payload = val;
 	}
 
+	///
 	void opAssign(T val)
 	{
 		static if (is(T : Object))
@@ -34,12 +36,18 @@ struct Optional(T)
 		emplace(&_payload, val);
 	}
 
+	/**
+		Gets the value.
+
+		Precondition: $(D_CODE !empty)
+	*/
 	inout(T) get() inout
 	{
 		assert(!_empty, "empty Optional");
 		return _payload;
 	}
 
+	///
 	inout(T) getOrElse(lazy inout(T) defaultValue) inout
 	{
 		return _empty ? defaultValue : _payload;
@@ -47,19 +55,21 @@ struct Optional(T)
 
 	static if(is(typeof({T t = null;})))
 	{
+		/// Returns value if available, or returns null if not. Only available for nullable types.
 		inout(T) orNull() inout
 		{
 			return _empty ? null : _payload;
 		}
 	}
 
+	///
 	void nullify()
 	{
 		assert(!_empty, "empty Optional");
 		_empty = true;
-		static if (__traits(compiles, T.init)) _payload = T.init;
 	}
 
+	///
 	@property bool empty() const
 	{
 		return _empty;
@@ -69,6 +79,7 @@ struct Optional(T)
 
 	alias popFront = nullify;
 
+	///
 	@property size_t length() const
 	{
 		return _empty ? 0 : 1;
@@ -82,28 +93,24 @@ struct Optional(T)
 }
 
 ///
-@safe pure nothrow @nogc
+@safe pure
 unittest
 {
 	Optional!string val = "foo";
 	assert(!val.empty);
 	assert(val.get() == "foo");
 
-	import std.range : isInputRange, hasLength;
-	static assert(isInputRange!(Optional!int));
-	static assert(hasLength!(Optional!int));
+	val.nullify();
+	assert(val.getOrElse("bar") == "bar");
 
+	// Range interface
+	val = "foo";
 	assert(val.length == 1);
 	assert(val.front == "foo");
-	foreach (i; val) { assert(i == "foo"); }
 
-	import std.range : only;
 	import std.algorithm : equal;
+	import std.range : only;
 	assert(equal(val, only("foo")));
-
-	val.popFront();
-	assert(val.length == 0);
-	foreach (i; val) assert(false);
 }
 
 @safe pure nothrow
@@ -113,6 +120,7 @@ unittest
 
 	obj = null;
 	assert(obj.empty);
+	assert(obj.orNull is null);
 
 	obj = new Object;
 	assert(!obj.empty);
