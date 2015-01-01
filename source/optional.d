@@ -73,6 +73,12 @@ struct Optional(T)
 	{
 		return _empty ? 0 : 1;
 	}
+
+	///
+	bool opCast(T : bool)() const
+	{
+		return !_empty;
+	}
 }
 
 ///
@@ -110,6 +116,10 @@ unittest
 
 	obj = new Object;
 	assert(!obj.empty);
+
+	// implicit cast to bool
+	if (obj) {}
+	else assert(0);
 }
 
 @safe pure nothrow @nogc
