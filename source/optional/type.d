@@ -75,14 +75,33 @@ struct Optional(T)
 		return _empty;
 	}
 
+	///
 	alias front = get;
-
+	///
+	alias back = get;
+	///
 	alias popFront = nullify;
+	///
+	alias popBack = nullify;
 
 	///
 	@property size_t length() const
 	{
 		return _empty ? 0 : 1;
+	}
+
+	inout(T) opIndex(size_t s) inout
+	{
+		assert(!empty, "empty Optional");
+		assert(s == 0);
+
+		return _payload;
+	}
+
+	///
+	@property auto save()
+	{
+		return this;
 	}
 
 	/**
@@ -230,6 +249,16 @@ unittest
 
 	Optional!(immutable Obj) obji = new immutable Obj(0);
 	static assert(!__traits(compiles, obji.get.x = 100));
+}
+
+unittest
+{
+	import std.range;
+
+	Optional!int num;
+	static assert(isInputRange!(typeof(num)));
+	static assert(isBidirectionalRange!(typeof(num)));
+	static assert(isRandomAccessRange!(typeof(num)));
 }
 
 
