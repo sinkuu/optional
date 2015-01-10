@@ -1,7 +1,7 @@
 module optional.type;
 
 
-import std.traits : Unqual;
+import std.traits;
 
 
 /// Represents 'optional' value.
@@ -9,7 +9,7 @@ struct Optional(T)
 {
 	private
 	{
-		Unqual!T _payload = void;
+		T _payload = void;
 		bool _empty = true;
 
 	}
@@ -25,6 +25,7 @@ struct Optional(T)
 	}
 
 	///
+	static if (isMutable!T)
 	void opAssign(T val)
 	{
 		static if (is(T : Object))
@@ -149,6 +150,8 @@ unittest
 	// implicit cast to bool
 	if (obj) {}
 	else assert(0);
+
+	Optional!(const(Object)) cobj;
 }
 
 @safe pure nothrow @nogc
