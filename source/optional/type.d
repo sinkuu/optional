@@ -76,7 +76,7 @@ struct Optional(T)
 	}
 
 	///
-	alias front = get;
+	@property inout(T) front() inout { return _payload; }
 	///
 	alias back = get;
 	///
@@ -90,10 +90,14 @@ struct Optional(T)
 		return _empty ? 0 : 1;
 	}
 
-	inout(T) opIndex(size_t s) inout
+	///
+	alias opDollar = length;
+
+	///
+	inout(T) opIndex(size_t n) inout
 	{
 		assert(!empty, "empty Optional");
-		assert(s == 0);
+		assert(n == 0);
 
 		return _payload;
 	}
