@@ -66,7 +66,6 @@ struct Optional(T)
 	///
 	void nullify()
 	{
-		assert(!_empty, "empty Optional");
 		_empty = true;
 	}
 
