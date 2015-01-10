@@ -228,7 +228,7 @@ unittest
 	static assert(!__traits(compiles, obji.get.x = 100));
 	assert(objc.get.x == 10);
 
-	immutable obji = new immutable Obj(0);
+	Optional!(immutable Obj) obji = new immutable Obj(0);
 	static assert(!__traits(compiles, obji.get.x = 100));
 }
 
