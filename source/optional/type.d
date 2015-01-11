@@ -137,7 +137,6 @@ struct Optional(T)
 }
 
 ///
-@safe pure
 unittest
 {
 	Optional!string val = "foo";
@@ -157,7 +156,6 @@ unittest
 	assert(equal(val, only("foo")));
 }
 
-@safe pure nothrow
 unittest
 {
 	Optional!Object obj;
@@ -215,7 +213,6 @@ unittest
 	assert(s2.get == S(100));
 }
 
-@safe pure nothrow
 unittest
 {
 	immutable Optional!string str = "foo";
@@ -227,13 +224,10 @@ unittest
 	assert(arr.get.length == 3);
 }
 
-@safe pure nothrow
 unittest
 {
 	class Obj
 	{
-	@safe pure nothrow @nogc:
-
 		private int _x;
 
 		@property
@@ -242,7 +236,7 @@ unittest
 			int x() const { return _x; }
 		}
 
-		this (int x) { _x = x; }
+		this (int x) pure { _x = x; }
 	}
 
 	Optional!Obj objm = new Obj(0);
