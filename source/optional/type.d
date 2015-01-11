@@ -42,7 +42,7 @@ struct Optional(T)
 
 		Precondition: $(D_CODE !empty)
 	*/
-	inout(T) get() inout
+	@property inout(T) get() inout
 	{
 		assert(!_empty, "empty Optional");
 		return _payload;
@@ -76,7 +76,7 @@ struct Optional(T)
 	}
 
 	///
-	@property inout(T) front() inout { return _payload; }
+	alias front = get;
 	///
 	alias back = get;
 	///
