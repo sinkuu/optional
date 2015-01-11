@@ -54,7 +54,7 @@ struct Optional(T)
 		return _empty ? defaultValue : _payload;
 	}
 
-	static if(is(typeof({T t = null;})))
+	static if(isImplicitlyConvertible!(typeof(null), T))
 	{
 		/// Returns value if available, or returns null if not. Only available for nullable types.
 		inout(T) orNull() inout
@@ -176,7 +176,6 @@ unittest
 	Optional!(const(Object)) cobj;
 }
 
-@safe pure nothrow @nogc
 unittest
 {
 	static struct S
@@ -186,9 +185,13 @@ unittest
 		@disable this();
 		@disable @property static S init();
 
-		this(int num) pure @safe nothrow @nogc
+		this(int num)
 		{
 			x = num;
+		}
+
+		this(string s)
+		{
 		}
 	}
 
